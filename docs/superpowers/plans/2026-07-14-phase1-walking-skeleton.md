@@ -215,9 +215,19 @@ interface TradeRepository {
 
 - [ ] **Step 2: 테스트용 설정 작성** (`src/test/resources/application.yml`)
 
-수집기가 테스트 컨텍스트에서 라이브 Upbit에 붙지 않도록 끈다.
+주의: 이 파일은 main의 `application.yml`을 **병합이 아니라 통째로 가린다**. 따라서 datasource 설정도 여기 포함해야 한다. 수집기는 테스트에서 끈다.
 
 ```yaml
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:candleforge}
+    username: ${DB_USER:candleforge}
+    password: ${DB_PASSWORD:candleforge}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
 candleforge:
   upbit:
     enabled: false
