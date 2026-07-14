@@ -38,3 +38,7 @@ Thumbs.db
 # Docker volumes (local data)
 data/
 pgdata/
+
+# Kotlin
+.kotlin/
+HELP.md

@@ -15,7 +15,7 @@
 
 | 영역 | 기술 |
 |---|---|
-| 프레임워크 | Spring Boot 3.x (Java 21) |
+| 프레임워크 | Spring Boot 3.x · Kotlin (JVM 21) · Gradle |
 | 데이터 소스 | Upbit WebSocket |
 | 저장소 | TimescaleDB (PostgreSQL 확장) |
 | 메시지 큐 | Kafka (Phase 4~) |
