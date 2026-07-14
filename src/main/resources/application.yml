@@ -25,3 +25,11 @@ management:
   endpoint:
     health:
       show-details: always
+
+# 수집기 설정
+candleforge:
+  upbit:
+    enabled: true
+    endpoint: wss://api.upbit.com/websocket/v1
+    codes:
+      - KRW-BTC

@@ -34,4 +34,22 @@
 
 ## 로컬 실행
 
-> 준비 중 (Phase 0 진행에 따라 갱신)
+전제: Docker Desktop 실행 중, JDK 21.
+
+```bash
+# 1) 인프라 기동 (TimescaleDB + Redis)
+docker compose up -d
+
+# 2) 앱 실행 (KRW-BTC 실시간 수집 시작)
+./gradlew bootRun
+
+# 3) 수집 확인 — 로그에 30초마다 [측정] received/stored 증가
+# 4) 조회
+curl "http://localhost:8080/api/v1/trades?code=KRW-BTC&limit=5"
+# 5) 측정 지표
+curl "http://localhost:8080/actuator/metrics/candleforge.trades.stored"
+```
+
+테스트: `docker compose up -d` 후 `./gradlew test` (저장소 테스트가 로컬 DB 사용).
+
+**진행 상황:** Phase 1(Walking Skeleton) 완료 — 1종목 수집→저장→조회 관통 + 측정.

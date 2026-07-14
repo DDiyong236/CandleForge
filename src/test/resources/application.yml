@@ -1,0 +1,18 @@
+# 테스트 전용 설정. (main의 application.yml을 가리므로 datasource도 여기 포함해야 함)
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:candleforge}
+    username: ${DB_USER:candleforge}
+    password: ${DB_PASSWORD:candleforge}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+# 테스트에선 라이브 Upbit에 붙지 않도록 수집기 끔
+candleforge:
+  upbit:
+    enabled: false
+    endpoint: wss://api.upbit.com/websocket/v1
+    codes:
+      - KRW-BTC
