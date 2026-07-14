@@ -18,7 +18,7 @@ class JdbcTradeRepositoryTest @Autowired constructor(
 ) {
     private fun sample(seqId: Long, price: String = "50000000") = Trade(
         time = Instant.ofEpochMilli(1700000000000),
-        code = "KRW-BTC",
+        code = "TEST-BTC",
         price = BigDecimal(price),
         volume = BigDecimal("0.001"),
         askBid = "BID",
@@ -30,7 +30,7 @@ class JdbcTradeRepositoryTest @Autowired constructor(
         val saved = repository.save(sample(seqId = 1L))
         assertTrue(saved)
 
-        val recent = repository.findRecent("KRW-BTC", 10)
+        val recent = repository.findRecent("TEST-BTC", 10)
         assertEquals(1, recent.size)
         assertEquals(1L, recent.first().sequentialId)
         assertEquals(0, recent.first().price.compareTo(BigDecimal("50000000")))
@@ -49,7 +49,7 @@ class JdbcTradeRepositoryTest @Autowired constructor(
         repository.save(older)
         repository.save(newer)
 
-        val recent = repository.findRecent("KRW-BTC", 10)
+        val recent = repository.findRecent("TEST-BTC", 10)
         assertEquals(11L, recent.first().sequentialId)  // 최신이 먼저
     }
 }
