@@ -23,3 +23,11 @@ SELECT add_continuous_aggregate_policy('candles_1m',
     start_offset      => INTERVAL '1 hour',
     end_offset        => INTERVAL '1 minute',
     schedule_interval => INTERVAL '1 minute');
+
+-- 3) 원본 보관정책: trades를 24시간 뒤 자동 삭제(청크 단위 drop)
+--    청크 간격 1일 + start_offset(1h) < 24h 이므로 캔들 무결성 유지하며 삭제
+SELECT add_retention_policy('trades', drop_after => INTERVAL '24 hours');
+
+-- 4) 캔들 압축: 7일 지나 완전히 굳은 candles_1m 청크를 무손실 압축
+ALTER MATERIALIZED VIEW candles_1m SET (timescaledb.compress = true);
+SELECT add_compression_policy('candles_1m', compress_after => INTERVAL '7 days');
