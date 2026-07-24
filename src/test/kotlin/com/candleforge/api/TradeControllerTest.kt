@@ -20,6 +20,7 @@ class TradeControllerTest(@Autowired val mockMvc: MockMvc) {
         @Bean
         fun tradeRepository(): TradeRepository = object : TradeRepository {
             override fun save(trade: Trade) = true
+            override fun saveAll(trades: List<Trade>) = trades.size
             override fun findRecent(code: String, limit: Int): List<Trade> = listOf(
                 Trade(Instant.ofEpochMilli(1700000000000), code,
                       BigDecimal("50000000"), BigDecimal("0.001"), "BID", 1L),
