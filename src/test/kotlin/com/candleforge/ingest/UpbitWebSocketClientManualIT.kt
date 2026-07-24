@@ -16,7 +16,7 @@ class UpbitWebSocketClientManualIT {
         val client = UpbitWebSocketClient(props)
         val latch = CountDownLatch(1)
 
-        client.connect { json ->
+        client.connect(listOf("KRW-BTC")) { json ->
             println("수신: ${json.take(120)}")
             if (json.contains("\"type\":\"trade\"") || json.contains("\"trade\"")) latch.countDown()
         }

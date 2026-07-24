@@ -19,7 +19,10 @@ class UpbitWebSocketClient(private val properties: UpbitProperties) {
     @Volatile private var webSocket: WebSocket? = null
 
     /** 연결을 시작하고, 디코딩된 JSON 메시지마다 onMessage를 호출한다. 논블로킹. */
-    fun connect(onMessage: (String) -> Unit) {
+    @Volatile private var subscribedCodes: List<String> = emptyList()
+
+    fun connect(codes: List<String>, onMessage: (String) -> Unit) {
+        subscribedCodes = codes
         running.set(true)
         openWithRetry(onMessage, attempt = 0)
     }
@@ -42,14 +45,14 @@ class UpbitWebSocketClient(private val properties: UpbitProperties) {
                 } else {
                     webSocket = ws
                     subscribe(ws)
-                    log.info("Upbit 연결 성공: codes=${properties.codes}")
+                    log.info("Upbit 연결 성공: ${subscribedCodes.size}종목 구독")
                 }
             }
     }
 
     /** 구독 요청 전송: [{ticket},{type:trade,codes},{format:DEFAULT}] */
     private fun subscribe(ws: WebSocket) {
-        val codesJson = properties.codes.joinToString(",") { "\"$it\"" }
+        val codesJson = subscribedCodes.joinToString(",") { "\"$it\"" }
         val request = """[{"ticket":"${UUID.randomUUID()}"},{"type":"trade","codes":[$codesJson]},{"format":"DEFAULT"}]"""
         ws.sendText(request, true)
         ws.request(1)

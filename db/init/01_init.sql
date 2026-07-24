@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS trades (
 );
 
 -- 3) 하이퍼테이블로 전환 (time 기준 자동 시간분할 → 대용량 시계열에 최적화)
-SELECT create_hypertable('trades', by_range('time'), if_not_exists => TRUE);
+--    청크 간격 1일: 원본 보관정책(24h)과 맞춰 "지난 청크 통째 삭제"가 깔끔하게 돌게 함
+SELECT create_hypertable('trades', by_range('time', INTERVAL '1 day'), if_not_exists => TRUE);
 
 -- 4) 멱등성(중복 저장 방지) 인덱스
 --    같은 (종목, 시각, 체결id)는 한 번만. 재연결/중복 수신 시 ON CONFLICT DO NOTHING으로 흡수 가능.

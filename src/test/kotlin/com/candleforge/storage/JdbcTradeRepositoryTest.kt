@@ -43,6 +43,24 @@ class JdbcTradeRepositoryTest @Autowired constructor(
     }
 
     @Test
+    fun `saveAll은 여러 건을 저장하고 신규 건수를 반환한다`() {
+        val batch = listOf(sample(seqId = 100L), sample(seqId = 101L), sample(seqId = 102L))
+        val inserted = repository.saveAll(batch)
+        assertEquals(3, inserted)
+
+        val recent = repository.findRecent("TEST-BTC", 10)
+        assertEquals(3, recent.size)
+    }
+
+    @Test
+    fun `saveAll은 중복을 제외한 신규만 센다`() {
+        repository.save(sample(seqId = 200L))                           // 먼저 1건 저장
+        val batch = listOf(sample(seqId = 200L), sample(seqId = 201L))  // 200은 중복
+        val inserted = repository.saveAll(batch)
+        assertEquals(1, inserted)                                       // 201만 신규
+    }
+
+    @Test
     fun `findRecent는 시간 내림차순으로 반환한다`() {
         val older = sample(seqId = 10L).copy(time = Instant.ofEpochMilli(1000))
         val newer = sample(seqId = 11L).copy(time = Instant.ofEpochMilli(2000))
