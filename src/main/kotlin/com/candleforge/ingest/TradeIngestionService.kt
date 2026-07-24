@@ -15,6 +15,7 @@ class TradeIngestionService(
     private val parser: UpbitTradeParser,
     private val repository: TradeRepository,
     private val properties: UpbitProperties,
+    private val marketClient: UpbitMarketClient,
     meterRegistry: MeterRegistry,
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
@@ -29,9 +30,22 @@ class TradeIngestionService(
             log.info("수집기 비활성화(candleforge.upbit.enabled=false)")
             return
         }
-        log.info("Upbit 수집 시작: ${properties.codes}")
-        client.connect(::handle)
+        val codes = resolveCodes()
+        log.info("Upbit 수집 시작: ${codes.size}종목")
+        client.connect(codes, ::handle)
     }
+
+    private fun resolveCodes(): List<String> =
+        if (properties.dynamicCodes) {
+            try {
+                marketClient.fetchKrwMarkets()
+            } catch (e: Exception) {
+                log.warn("종목 목록 조회 실패, 설정값으로 대체: ${e.message}")
+                properties.codes
+            }
+        } else {
+            properties.codes
+        }
 
     private fun handle(json: String) {
         val trade = try {

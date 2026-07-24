@@ -31,5 +31,6 @@ candleforge:
   upbit:
     enabled: true
     endpoint: wss://api.upbit.com/websocket/v1
-    codes:
+    dynamicCodes: true      # 전체 KRW 마켓 자동 구독
+    codes:                  # dynamicCodes=false일 때만 사용
       - KRW-BTC
